@@ -1,0 +1,58 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+
+struct tri
+{
+    int min,max,sum;
+    tri(int a,int b,int c)
+    {
+        min = a;
+        max= b;
+        sum = c;
+    }
+};
+
+class Solution {
+public:
+    tri solve(TreeNode *root, int& res)
+    {
+        if(root == NULL)
+        {
+            tri t(INT_MAX,INT_MIN,0);
+            return t;
+        }
+        
+        
+        tri a = solve(root->left,res);        //recursion for left sub tree
+		tri b = solve(root->right,res);    //recursion for right sub tree
+        
+        
+        if( (a.max < root->val) && (b.min >root->val))                                   // root is in valid range ang forms BST
+        {
+            res = max( { res, a.sum+b.sum+root->val});                                       // update the result
+            tri t( min({a.min,b.min,root->val}), max({a.max,b.max,root->val}), a.sum+b.sum+root->val);      // return min ,max , sum of sub tree to parent
+            return t;
+        }
+        else
+        {
+            tri t(INT_MIN ,INT_MAX , INT_MIN);     //return min ,max , sum of sub tree to parent
+            return t;
+        }
+            
+    }
+    int maxSumBST(TreeNode* root) 
+    {
+        int res=0;
+        solve(root,res);
+        return res;
+    }
+};
